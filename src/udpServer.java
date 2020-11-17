@@ -4,9 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.Scanner;
 
 public class udpServer {
     static int goBackN(int lostSeqNum){
@@ -18,12 +16,12 @@ public class udpServer {
         }
     }
     public static void main(String[] args) throws IOException {
-//        File destfile = new File("hello.txt");
-//        FileOutputStream fos = new FileOutputStream(destfile);
-//        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        File destfile = new File("COSC635_P2_DataReceived.txt");
+        FileOutputStream fos = new FileOutputStream(destfile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
 
         DatagramSocket ds = new DatagramSocket(8888);// open port to listen
-        byte[] receive = new byte[1024];
+        byte[] receive = new byte[4096];
         ByteBuffer buff = ByteBuffer.wrap(receive);
         DatagramPacket DpReceive = null;
         int lastPacketReceived = 0;
@@ -49,7 +47,7 @@ public class udpServer {
                     ds.send(ack);
                     System.out.println("Sent ack for current SeqNum " + currentSeqNum);
 //                    System.out.println("currentMessageSet" + currentMessageSet);
-        //            bos.write(currentMessageSet);// We can add this later so we don't need to continue rewriting
+                    bos.write(currentMessageSet.getBytes());// We can add this later so we don't need to continue rewriting
                     if(lastPacket == -1){ // finished, so close connection
                         ds.close();
                         return;
@@ -62,7 +60,7 @@ public class udpServer {
                     currentMessageSet = "";
                     lastPacketReceived = goBackN(currentSeqNum);
                 }
-//            System.out.println("after round "+ currentSeqNum +"currentMessageSet is " + currentMessageSet);
+            System.out.println("after round "+ currentSeqNum +"currentMessageSet is " + currentMessageSet);
             buff.clear();
             buff.rewind(); //reset buffer
         }

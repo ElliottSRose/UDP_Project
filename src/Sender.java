@@ -13,18 +13,17 @@ import java.util.Scanner;
 public class Sender {
 
     private static int windowSize = 4;
-    private static int currentSeqNum = 1;// maybe this should be 1
+    private static int currentSeqNum = 1;
     private static int totalPacketsSent = 0;
     private static long start = 0;
     private static long end = 0;
-    private static int max = 1022;
+    private static int max = 4094;// subtracted 2 to fit seqNum and lastPacket identifier
     private static int userNum;
     private static int testNum;
     private static int packetLoss;
     private static int startIndex;
     private static int endIndex;
     private static byte[] data;
-    private static ByteBuffer buf;
     private static int lostSeqNum;
 
     static int packetLossSim() {
@@ -56,7 +55,7 @@ public class Sender {
     static byte[] setupPacket(int max, int currentSeqNum, byte[] totalBytes) {
         startIndex = max * currentSeqNum;
         endIndex = startIndex + max;
-        data = new byte[1022];
+        data = new byte[4094];
         data = Arrays.copyOfRange(totalBytes, startIndex, endIndex); //get bytes for the current packet from totalBytes
         byte[] seqNum = checkIfLastPacket(totalBytes, endIndex, currentSeqNum);
         byte[] destination = new byte[data.length + seqNum.length];
@@ -75,7 +74,7 @@ public class Sender {
     }
 
     public static void main(String args[]) throws IOException {
-        byte[] totalBytes = Files.readAllBytes(Paths.get("test.txt")); //convert entire file to bytes
+        byte[] totalBytes = Files.readAllBytes(Paths.get("COSC635_P2_DataSent.txt")); //convert entire file to bytes
         try {//SETUP OF CONNECTION AND FILE
             DatagramSocket ds = new DatagramSocket();
             ds.setSoTimeout(3000); //arbitrary milliseconds
@@ -85,7 +84,7 @@ public class Sender {
                 int eachRoundCompare = currentSeqNum + windowSize;
                 while (currentSeqNum < eachRoundCompare) {  //CHECK IF WINDOW SIZE HAS BEEN SENT
                     byte[] destination = setupPacket(max, currentSeqNum, totalBytes);
-                    DatagramPacket pkt = new DatagramPacket(destination, 1024, InetAddress.getLocalHost(), 8888);
+                    DatagramPacket pkt = new DatagramPacket(destination, 4096, InetAddress.getLocalHost(), 8888);
                     int pseudoNum = new Random(System.currentTimeMillis()).nextInt(99); //pseudonumber generated using random seed set to current system time
                     System.out.println("Pseudonum is " + pseudoNum);
 
@@ -113,7 +112,7 @@ public class Sender {
                             System.out.println("The refreshed currentSeqNum after loss is "+ currentSeqNum);
                             }
                         }
-                    if (totalBytes.length < currentSeqNum * 1024) {
+                    if (totalBytes.length < currentSeqNum * 4094) {
                         System.out.println("Packets sent: " + totalPacketsSent);
                         System.out.println("Lost packets: " + packetLoss);
                         return;
