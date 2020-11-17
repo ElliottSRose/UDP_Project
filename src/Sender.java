@@ -17,7 +17,7 @@ public class Sender {
     private static int totalPacketsSent = 0;
     private static long start = 0;
     private static long end = 0;
-    private static int max = 1023;
+    private static int max = 1022;
     private static int userNum;
     private static int testNum;
     private static int packetLoss;
