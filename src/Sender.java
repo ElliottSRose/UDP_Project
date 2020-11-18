@@ -3,7 +3,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -56,6 +55,9 @@ public class Sender {
         startIndex = max * currentSeqNum;
         endIndex = startIndex + max;
         data = new byte[4094];
+        if (endIndex> totalBytes.length){
+            endIndex = totalBytes.length;
+        }
         data = Arrays.copyOfRange(totalBytes, startIndex, endIndex); //get bytes for the current packet from totalBytes
         byte[] seqNum = checkIfLastPacket(totalBytes, endIndex, currentSeqNum);
         byte[] destination = new byte[data.length + seqNum.length];
@@ -84,7 +86,7 @@ public class Sender {
                 int eachRoundCompare = currentSeqNum + windowSize;
                 while (currentSeqNum < eachRoundCompare) {  //CHECK IF WINDOW SIZE HAS BEEN SENT
                     byte[] destination = setupPacket(max, currentSeqNum, totalBytes);
-                    DatagramPacket pkt = new DatagramPacket(destination, 4096, InetAddress.getLocalHost(), 8888);
+                    DatagramPacket pkt = new DatagramPacket(destination, destination.length, InetAddress.getLocalHost(), 8888);
                     int pseudoNum = new Random(System.currentTimeMillis()).nextInt(99); //pseudonumber generated using random seed set to current system time
                     System.out.println("Pseudonum is " + pseudoNum);
 
