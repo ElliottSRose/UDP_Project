@@ -44,7 +44,7 @@ public class Sender {
     static byte[] checkIfLastPacket(byte[] totalBytes, int endIndex, int currentSeqNum){
         byte[] num = new byte[2];
         num[0] = (byte) currentSeqNum;
-        if (totalBytes.length < endIndex){
+        if (totalBytes.length == endIndex){
             num[1] = (byte) -1;
         }else{
             num[1] = (byte) 0;
@@ -124,7 +124,8 @@ public class Sender {
             }
         finally {
             end = System.nanoTime(); //end the timer
-            System.out.println("Elapsed time: " + (end - start));
+            System.out.println("Elapsed time in nanoseconds: " + (end - start) );
+            System.out.println("Elapsed time in seconds: " + (end - start)/1000000 );
             System.out.println("Goodbye!");
         }
     }

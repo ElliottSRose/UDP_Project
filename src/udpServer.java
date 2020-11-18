@@ -47,7 +47,7 @@ public class udpServer {
                     ds.send(ack);
                     System.out.println("Sent ack for current SeqNum " + currentSeqNum);
 //                    System.out.println("currentMessageSet" + currentMessageSet);
-                    bos.write(currentMessageSet.getBytes());// We can add this later so we don't need to continue rewriting
+                    bos.write(currentMessageSet.getBytes());
                     if(lastPacket == -1){ // finished, so close connection
                         ds.close();
                         return;
@@ -60,7 +60,7 @@ public class udpServer {
                     currentMessageSet = "";
                     lastPacketReceived = goBackN(currentSeqNum);
                 }
-            System.out.println("after round "+ currentSeqNum +"currentMessageSet is " + currentMessageSet);
+//            System.out.println("after round "+ currentSeqNum +"currentMessageSet is " + currentMessageSet);
             buff.clear();
             buff.rewind(); //reset buffer
         }
